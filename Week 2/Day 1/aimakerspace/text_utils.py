@@ -59,8 +59,14 @@ class CharacterTextSplitter:
 
     def split(self, text: str) -> List[str]:
         chunks = []
-        for i in range(0, len(text), self.chunk_size - self.chunk_overlap):
-            chunks.append(text[i : i + self.chunk_size])
+        start = 0
+        while start < len(text):
+            end = start + self.chunk_size
+            if end < len(text):  # Make sure we're not at the end of the text
+                while end > start and text[end] not in ' \t\n':  # Adjust end to the nearest whitespace
+                    end -= 1
+            chunks.append(text[start:end])
+            start = end - self.chunk_overlap  # Move start up by chunk size minus overlap
         return chunks
 
     def split_texts(self, texts: List[str]) -> List[str]:
